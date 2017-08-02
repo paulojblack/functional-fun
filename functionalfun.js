@@ -21,9 +21,9 @@ different results at different times when called with the same arguments but a d
 
 So to summarize, in functional programming:
 1. Every function should be pure
-2. Every function should be composable with any other
-3. There should be no reliance on any form of state
-4. All data structures are immutable
+2. All data structures are immutable
+3. Every function should be composable with any other
+
 
 And go through each point with examples.
 */
@@ -54,6 +54,8 @@ Let's look at the first rule:
 // This is a pure function
 function pureAddition(num1, num2) {
     console.log(num1 + num2)
+
+    return num1 + num2
 }
 
 /*
@@ -69,6 +71,7 @@ function impureAddition(num1, num2) {
     }
 
     console.log(num1 + num2)
+    return num1 + num2
 }
 
 /*
@@ -87,7 +90,6 @@ function inconsistentAddition(num1, num2) {
     impureAddition(num1, num2)
     //205
 }
-inconsistentAddition(2, 5)
 
 /*
 If it's not completely clear how this would translate to a real world scenario, later
@@ -97,9 +99,36 @@ all functions will be pure.
 */
 
 /*
-Part 2 of the pure function axiom says that a Pure Function won't have any side effects.
+Part 2 of the pure function axiom states that a Pure Function won't produce any side effects.
+
+Its fair to think of this as the converse of the first rule about pure functions, which
+could be restated to say that a pure function shouldn't have side effects.
+
+In the same way a pure function won't depend on anything other than exactly what was passed in
+to it, a pure function won't do anything at all other return its output.
+
+So let's rewrite our inconsistentAddition function to emphasize this point
  */
 
+ function inconsistentAddition(num1, num2) {
+     process.env['num1'] = 200
+
+     return impureAddition(num1, num2)
+     //205
+ }
+
+/*
+We're altering our environment and returning the result of impureAddition! That sounds like a side effect to me!
+Well,now this is following rule 1 of Pure Functions, because if we call inconsistentAddition,
+it will always set num1 to 200. But what if we call inconsistentAddition and then call impureAddition
+on its own? impureAddition will return a crazy result, because impureAddition breaks rule 1 of Pure Functions
+which made it vulnerable when we called inconsistentAddition, which breaks rule 2 of Pure Functions.
+*/
+
+/*
+2. Every data structure should be immutable
+
+*/
 //TODO unfinished
 // My data structure is an array of arrays of primitive floats
 let myDataStructure = [1, 2, 3];
